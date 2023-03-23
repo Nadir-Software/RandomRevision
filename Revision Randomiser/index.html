@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revision Randomiser</title>
+
+    <!-- CSS -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+        body {
+            background-color: black;
+
+            font-family: "Noto Sans", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            color: white;
+        }
+
+        h1 {
+            text-align: center;
+            font-weight: 200;
+        }
+
+        h2 {
+            font-weight: 200;
+        }
+
+        button {
+            background-color: rgba(255, 255, 255, 0.5);
+
+            border: none;
+            border-radius: 15px;
+
+            padding: 2.5vh;
+
+            cursor: pointer;
+
+            transition: 0.25s ease;
+        }
+
+        button:hover {
+            background-color: rgba(255, 255, 255, 0.75);
+        }
+    </style>
+</head>
+<body>
+    <h1>Revision Randomiser</h1>
+    <h2 id="subject">Subject: </h2>
+    <h2 id="revised">Number of Revision Sessions: </h2>
+    <button onclick="window.location.href = ''">Reload</button>
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <button id="reset-btn" onclick="reset()">Delete data</button>
+
+    <!-- JS -->
+    <script>
+        // Define variables
+        const subjects = ["biology", "chemistry", "computing", "english",  "geography", "history", "maths", "statistics", "physics"];
+        const subjectsElement = document.getElementById("subject");
+        const revisedElement = document.getElementById("revised");
+
+        const biologyURLs1 = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-84611H-QP-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-84611H-QP-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-84611H-QP-CR-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-84611H-QP-JUN18.PDF", "http://filestore.aqa.org.uk/resources/biology/AQA-84611H-SQP.PDF"];
+        const biologyScheme1 = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-84611H-MS-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-84611H-W-MS-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-84612F-W-MS-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-84611H-W-MS-JUN18.PDF", "http://filestore.aqa.org.uk/resources/biology/AQA-84611H-SMS.PDF"];
+
+        const biologyURLs2 = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-84612H-QP-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-84612H-QP-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-84612H-QP-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-84612H-QP-JUN18.PDF", "http://filestore.aqa.org.uk/resources/biology/AQA-84612H-SQP.PDF"];
+        const biologyScheme2 = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-84612H-MS-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-84612H-W-MS-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-84612H-W-MS-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-84612H-W-MS-JUN18.PDF", "http://filestore.aqa.org.uk/resources/biology/AQA-84612H-SMS.PDF"];
+
+        const chemistryURLs1 = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-84621H-QP-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-84621H-QP-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-84621H-QP-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-84621H-QP-JUN18.PDF", "http://filestore.aqa.org.uk/resources/chemistry/AQA-84621H-SQP.PDF"];
+        const chemistryScheme1 = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-84621H-MS-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-84621H-W-MS-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-84621H-W-MS-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-84621H-W-MS-JUN18.PDF", "http://filestore.aqa.org.uk/resources/chemistry/AQA-84621H-SMS.PDF"];
+
+        const chemistryURLs2 = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-84622H-QP-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-84622H-QP-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-84622H-QP-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-84622H-QP-JUN18.PDF", "http://filestore.aqa.org.uk/resources/chemistry/AQA-84622H-SQP.PDF"];
+        const chemistryScheme2 = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-84622H-MS-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-84622H-W-MS-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-84622H-W-MS-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-84622H-W-MS-JUN18.PDF", "http://filestore.aqa.org.uk/resources/chemistry/AQA-84622H-SMS.PDF"];
+        
+        const computingURLs1 = ["https://revisionworld.com/sites/revisionworld.com/files/imce/667555-question-paper-computer-systems.pdf", "https://revisionworld.com/sites/revisionworld.com/files/imce/642760-question-paper-computer-systems.pdf", "https://revisionworld.com/sites/revisionworld.com/files/imce/619639-question-paper-computer-systems.pdf", "https://revisionworld.com/sites/revisionworld.com/files/imce/536751-question-paper-computer-systems.pdf"];
+        const computingScheme1 = ["https://revisionworld.com/sites/revisionworld.com/files/imce/667557-mark-scheme-computer-systems.pdf", "https://revisionworld.com/sites/revisionworld.com/files/imce/642762-mark-scheme-computer-systems.pdf", "https://revisionworld.com/sites/revisionworld.com/files/imce/619991-mark-scheme-computer-systems.pdf", "https://revisionworld.com/sites/revisionworld.com/files/imce/536755-mark-scheme-computer-systems.pdf"];
+
+        const computingURLs2 = ["https://revisionworld.com/sites/revisionworld.com/files/imce/667556-question-paper-computational-thinking-algorithms-and-programming.pdf", "https://revisionworld.com/sites/revisionworld.com/files/imce/642761-question-paper-computational-thinking-algorithms-and-programming.pdf", "https://revisionworld.com/sites/revisionworld.com/files/imce/619640-question-paper-computational-thinking-algorithms-and-programming.pdf", "https://revisionworld.com/sites/revisionworld.com/files/imce/536752-question-paper-computational-thinking-algorithms-and-programming.pdf"];
+        const computingScheme2 = ["https://revisionworld.com/sites/revisionworld.com/files/imce/667558-mark-scheme-computational-thinking-algorithms-and-programming.pdf", "https://revisionworld.com/sites/revisionworld.com/files/imce/642763-mark-scheme-computational-thinking-algorithms-and-programming.pdf", "https://revisionworld.com/sites/revisionworld.com/files/imce/619992-mark-scheme-computational-thinking-algorithms-and-programming.pdf", "https://revisionworld.com/sites/revisionworld.com/files/imce/536756-mark-scheme-computational-thinking-algorithms-and-programming.pdf"];
+
+        const englishLang1URLs = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-87001-QP-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-87001-QP-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-87001-QP-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/november/AQA-87001-QP-NOV18.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-87001-QP-JUN18.PDF", "http://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2017/november/AQA-87001-QP-NOV17-CR.PDF", "http://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2017/june/AQA-87001-QP-JUN17.PDF"];
+        const englishLang1Scheme = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-87001-MS-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-87001-W-MS-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-87001-W-MS-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/november/AQA-87001-W-MS-NOV18.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-87001-W-MS-JUN18.PDF", "http://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2017/november/AQA-87001-W-MS-NOV17.PDF", "http://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2017/june/AQA-87001-W-MS-JUN17.PDF"];
+        const englishLang1Insert = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-87001-INS-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-87001-INS-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-87001-INS-CR-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/november/AQA-87001-INS-NOV18.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-87001-INS-JUN18.PDF", "http://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2017/november/AQA-87001-INS-NOV17-CR.PDF", "http://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2017/june/AQA-87001-INS-JUN17.PDF"];
+        
+        const englishLang2URLs = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-87002-QP-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-87002-QP-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-87002-QP-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/november/AQA-87002-QP-NOV18.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-87002-QP-JUN18.PDF", "http://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2017/november/AQA-87002-QP-NOV17.PDF", "http://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2017/june/AQA-87002-QP-JUN17.PDF"];
+        const englishLang2Scheme = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-87002-MS-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-87002-W-MS-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-87002-W-MS-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/november/AQA-87002-W-MS-NOV18.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-87002-W-MS-JUN18.PDF", "http://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2017/november/AQA-87002-W-MS-NOV17.PDFhttp://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2017/june/AQA-87002-W-MS-JUN17.PDF"];
+        const englishLang2Insert = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-87002-INS-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-87002-INS-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-87002-INS-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/november/AQA-87002-INS-NOV18.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-87002-INS-JUN18.PDF", "http://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2017/november/AQA-87002-INS-NOV17-CR.PDF", "http://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2017/june/AQA-87002-INS-JUN17.PDF"];
+        
+        const englishLit1URLs = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-87021M-QP-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-87021N-QP-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-87021P-QP-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-87021-QP-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-87021-QP-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-87021-QP-JUN18.PDF", "http://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2017/june/AQA-87021-QP-JUN17.PDF", "http://filestore.aqa.org.uk/resources/english/AQA-87021-SQP-V1.PDF"];
+        const englishLit1Scheme = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-87021M-MS-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-87021N-MS-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-87021P-MS-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-87021-W-MS-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-87021-W-MS-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-87021-W-MS-JUN18.PDF", "http://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2017/june/AQA-87021-W-MS-JUN17.PDF", "http://filestore.aqa.org.uk/resources/english/AQA-87021-SMS.PDF"];
+
+        const englishLit2URLs = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-87022-QP-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-87022-QP-NOV20-CR.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-87022-QP-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-87022-QP-JUN18-CR.PDF", "http://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2017/june/AQA-87022-QP-JUN17.PDF", "http://filestore.aqa.org.uk/resources/english/AQA-87022-SQP.PDF"];
+        const englishLit2Scheme = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-87022-MS-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-87022-W-MS-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-87022-W-MS-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-87022-W-MS-JUN18.PDF", "http://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2017/june/AQA-87022-W-MS-JUN17.PDF", "http://filestore.aqa.org.uk/resources/english/AQA-87022-SMS.PDF"];
+
+        const geographyURLs1 = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-80351-INS-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-80351-QP-NOV20-CR.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-80351-QP-JUN19-CR.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-80351-QP-JUN18.PDF", "http://filestore.aqa.org.uk/resources/geography/AQA-80351-SQP.PDF"];
+        const geographyScheme1 = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-80351-MS-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-80351-W-MS-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-80351-W-MS-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-80351-W-MS-JUN18.PDF", "http://filestore.aqa.org.uk/resources/geography/AQA-80351-SMS.PDF"];
+
+        const geographyURLs2 = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-80352-QP-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-80352-QP-NOV20-CR.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-80352-QP-JUN19-CR.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-80352-QP-JUN18.PDF", "http://filestore.aqa.org.uk/resources/geography/AQA-80352-SQP.PDF"];
+        const geographyScheme2 = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-80352-MS-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-80352-W-MS-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-80352-W-MS-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-80352-W-MS-JUN18.PDF", "http://filestore.aqa.org.uk/resources/geography/AQA-80352-SMS.PDF"];
+
+        const historyURLs1 = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-81451AB-QP-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-81451AB-QP-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-81451AB-QP-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-81451AB-QP-JUN18.PDF", ""];
+        const historyScheme1 = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-81451AB-MS-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-81451AB-W-MS-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-81451AB-W-MS-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-81451AB-W-MS-JUN18.PDF"];
+        const historyInsert1 = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-81451AB-INS-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-81451AB-INS-NOV20-CR.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-81451AB-INS-JUN19-CR.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-81451AB-INS-JUN18.PDF", ""];
+        
+        const historyURLs2 = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-81452AA-QP-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-81452AA-QP-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-81452AA-QP-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-81452AA-QP-JUN18.PDF"];
+        const historyScheme2 = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-81452AA-MS-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-81452AA-W-MS-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-81452AA-W-MS-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-81452AA-W-MS-JUN18.PDF"];
+        const historyInsert2 = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-81452AA-INS-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-81452AA-INS-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-81452AA-INS-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-81452AA-INS-JUN18.PDF"];
+
+        const historyURLs3 = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-81452BC-QP-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-81452BC-QP-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-81452BC-QP-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-81452BC-QP-JUN18.PDF"];
+        const historyScheme3 = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-81452BC-MS-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-81452BC-W-MS-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-81452BC-W-MS-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-81452BC-W-MS-JUN18.PDF"];
+        const historyInsert3 = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-81452BC-INS-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-81452BC-INS-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-81452BC-INS-E2-JUN19-CR.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-81452BC-INS-JUN18.PDF"];
+
+        const mathsURLs1 = ["https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_1H_que_20211103.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_1H_que_20201104.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_2H_que_20201106.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_1H_que_20190522.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/Questionpaper-Paper1H-November2018.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_1H_QP_0.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_1H_QP_1.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_1H_QP.pdf"];
+        const mathsScheme1 = ["https://revisionmaths.com/sites/mathsrevision.net/files/imce/1ma1-1h-rms-20220113.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_1H_msc_20210114.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_1H_rms_20190822.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/Markscheme-Paper1H-November2018.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_1H_MS_0.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_1H_MS_1.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_1H_MS.pdf"];
+
+        const mathsURLs2 = ["https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_2H_que_20211105.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_2H_que_20201106.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_2H_que_20190607.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/Questionpaper-Paper2H-November2018.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_2H_QP_0.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_2H_QP_1.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_2H_QP.pdf"];
+        const mathsScheme2 = ["https://revisionmaths.com/sites/mathsrevision.net/files/imce/1ma1-2h-rms-20220113.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_2H_msc_20210114.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_2H_rms_20190822.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/Markscheme-Paper2H-November2018.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_2H_MS_0.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_2H_MS_1.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_2H_MS.pdf"];
+        
+        const mathsURLs3 = ["https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_3H_que_20211109.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_3H_que_20201110.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_3H_que_20190612.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/Questionpaper-Paper3H-November2018.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_3H_QP_0.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_3H_QP_1.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_3H_QP.pdf"];
+        const mathsScheme3 = ["https://revisionmaths.com/sites/mathsrevision.net/files/imce/1ma1-3h-rms-20220113.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_3H_msc_20210114.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_3H_rms_20190822.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/Markscheme-Paper3H-November2018.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_3H_MS_0.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_3H_MS_1.pdf", "https://revisionmaths.com/sites/mathsrevision.net/files/imce/1MA1_3H_MS.pdf"];
+
+        const statisticsURLs1 = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-83821H-QP-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-83821H-QP-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-83821H-QP-JUN19.PDF", "https://filestore.aqa.org.uk/resources/mathematics/AQA-83821H-SQP.PDF"];
+        const statisticsScheme1 = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-83821H-MS-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-83821H-W-MS-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-83821H-W-MS-JUN19.PDF", "https://filestore.aqa.org.uk/resources/mathematics/AQA-83821H-SMS.PDF"];
+
+        const statisticsURLs2 = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-83822H-QP-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-83822H-QP-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-83822H-QP-JUN19.PDF", "https://filestore.aqa.org.uk/resources/mathematics/AQA-83822H-SQP.PDF"];
+        const statisticsScheme2 = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-83822H-MS-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-83822H-W-MS-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-83822H-W-MS-JUN19.PDF", "https://filestore.aqa.org.uk/resources/mathematics/AQA-83822H-SMS.PDF"];
+
+        const physicsURLs1 = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-84631H-QP-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-84631H-QP-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-84631H-QP-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-84631H-QP-JUN18.PDF", "http://filestore.aqa.org.uk/resources/physics/AQA-84631H-SQP.PDF"];
+        const physicsScheme1 = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-84631H-MS-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-84631H-W-MS-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-84631H-W-MS-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-84631H-W-MS-JUN18.PDF", "http://filestore.aqa.org.uk/resources/physics/AQA-84631H-SMS.PDF"];
+        
+        const physicsURLs2 = ["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-84632H-QP-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-84632H-QP-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-84632H-QP-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-84632H-QP-JUN18.PDF", "http://filestore.aqa.org.uk/resources/physics/AQA-84632H-SQP.PDF"];
+        const physicsScheme2 =["https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2021/november/AQA-84632H-MS-NOV21.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2020/november/AQA-84632H-W-MS-NOV20.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2019/june/AQA-84632H-W-MS-JUN19.PDF", "https://filestore.aqa.org.uk/sample-papers-and-mark-schemes/2018/june/AQA-84632H-W-MS-JUN18.PDF", "http://filestore.aqa.org.uk/resources/physics/AQA-84632H-SMS.PDF"];
+
+        var biologyRevised = localStorage.getItem("biology") || 0;
+        var chemistryRevised = localStorage.getItem("chemistry") || 0;
+        var computingRevised = localStorage.getItem("computing") || 0;
+        var englishRevised = localStorage.getItem("english") || 0;
+        var geographyRevised = localStorage.getItem("geography") || 0;
+        var historyRevised = localStorage.getItem("history") || 0;
+        var mathsRevised = localStorage.getItem("maths") || 0;
+        var statisticsRevised = localStorage.getItem("statistics") || 0;
+        var physicsRevised = localStorage.getItem("physics") || 0;
+        var subjectNames = ["Biology", "Chemistry", "Computer Science", "English", "Geography", "History", "Maths", "Statistics", "Physics"];
+        var subjectsRevised = [biologyRevised, chemistryRevised, computingRevised, englishRevised, geographyRevised, historyRevised, mathsRevised, statisticsRevised, physicsRevised];
+
+        var lowestScore = Infinity;
+        var chosenSubject;
+
+        // Calculate lowest
+        // Loop through each subject in the list and find the lowest score
+        for (var i = 0; i < subjectsRevised.length; i++) {
+        if (subjectsRevised[i] < lowestScore) {
+            lowestScore = subjectsRevised[i];
+            chosenSubjects = [subjectNames[i]]; // Assuming you have an array called `subjectNames` that corresponds to the list of subjects
+        } else if (subjectsRevised[i] === lowestScore) {
+            chosenSubjects.push(subjectNames[i]);
+        }
+        }
+
+        // Randomly choose one of the joint-lowest scoring subjects
+        var randomIndex = Math.floor(Math.random() * chosenSubjects.length);
+        var chosenSubject = chosenSubjects[randomIndex];
+
+        // Print the chosen subject to the console
+        console.log("The subject with the lowest score is " + chosenSubject);
+
+        // Update elements
+        subjectsElement.innerText = subjectsElement.innerText + " " + chosenSubject;
+        revisedElement.innerText = revisedElement.innerText + " " + subjectsRevised[i -= 1];
+
+        // Discern next steps to opening paper
+        if (chosenSubject == "Biology") {
+            // Determine paper
+            var paper = Math.floor(Math.random() * 2) + 1;
+            console.log(paper);
+
+            if (paper == 1) {
+                // Determine URL
+                var URLNumber = Math.floor(Math.random() * biologyURLs1.length);
+
+                // Open URLs
+                window.open(biologyURLs1[URLNumber], '_blank');
+                window.open(biologyScheme1[URLNumber], '_blank');
+            }
+
+            else if (paper == 2) {
+                // Determine URL
+                var URLNumber = Math.floor(Math.random() * biologyURLs2.length);
+
+                // Open URLs
+                window.open(biologyURLs2[URLNumber], '_blank');
+                window.open(biologyScheme2[URLNumber], '_blank');
+            }
+
+            // Update data
+            biologyRevised ++;
+            localStorage.setItem("biology", biologyRevised);
+        }
+
+        else if (chosenSubject == "Chemistry") {
+            // Determine paper
+            var paper = Math.floor(Math.random() * 2) + 1;
+
+            if (paper == 1) {
+                // Determine URL
+                var URLNumber = Math.floor(Math.random() * chemistryURLs1.length);
+
+                // Open URLs
+                window.open(chemistryURLs1[URLNumber], '_blank');
+                window.open(chemistryScheme1[URLNumber], '_blank');
+            }
+
+            else if (paper == 2) {
+                // Determine URL
+                var URLNumber = Math.floor(Math.random() * chemistryURLs2.length);
+
+                // Open URLs
+                window.open(chemistryURLs2[URLNumber], '_blank');
+                window.open(chemistryScheme2[URLNumber], '_blank');
+            }
+
+            // Update data
+            chemistryRevised ++;
+            localStorage.setItem("chemistry", chemistryRevised);
+        }
+
+        else if (chosenSubject == "Computer Science") {
+            // Determine paper
+            var paper = Math.floor(Math.random() * 2) + 1;
+
+            if (paper == 1) {
+                // Determine URL
+                var URLNumber = Math.floor(Math.random() *computingURLs1.length);
+
+                // Open URLs
+                window.open(computingURLs1[URLNumber], '_blank');
+                window.open(computingScheme1[URLNumber], '_blank');
+            }
+
+            else if (paper == 2) {
+                // Determine URL
+                var URLNumber = Math.floor(Math.random() *computingURLs2.length);
+
+                // Open URLs
+                window.open(computingURLs2[URLNumber], '_blank');
+                window.open(computingScheme2[URLNumber], '_blank');
+            }
+
+            // Update data
+            computingRevised ++;
+            localStorage.setItem("computing", computingRevised);
+        }
+
+        else if (chosenSubject == "English") {
+            // Determine lit or lang
+            var litLang = Math.floor(Math.random() * 2) + 1; // 1 == Lang; 2 == Lit
+
+            // Determine paper
+            var paper = Math.floor(Math.random() * 2) + 1;
+
+            if (litLang == 1 && paper == 1) {
+                // Determine URL
+                var URLNumber = Math.floor(Math.random() * englishLang1URLs.length);
+
+                // Open URLs
+                window.open(englishLang1URLs[URLNumber], '_blank');
+                window.open(englishLang1Insert[URLNumber], '_blank');
+                window.open(englishLang1Scheme[URLNumber], '_blank');
+            }
+
+            else if (litLang == 1 && paper == 2) {
+                // Determine URL
+                var URLNumber = Math.floor(Math.random() * englishLang2URLs.length);
+
+                // Open URLs
+                window.open(englishLang2URLs[URLNumber], '_blank');
+                window.open(englishLang2Insert[URLNumber], '_blank');
+                window.open(englishLang2Scheme[URLNumber], '_blank');
+            }
+
+            else if (litLang == 2 && paper == 1) {
+                // Determine URL
+                var URLNumber = Math.floor(Math.random() * englishLit1URLs.length);
+
+                // Open URLs
+                window.open(englishLit1URLs[URLNumber], '_blank');
+                window.open(englishLit1Scheme[URLNumber], '_blank');
+            }
+
+            else if (litLang == 2 && paper == 2) {
+                // Determine URL
+                var URLNumber = Math.floor(Math.random() * englishLit2URLs.length);
+
+                // Open URLs
+                window.open(englishLit2URLs[URLNumber], '_blank');
+                window.open(englishLit2Scheme[URLNumber], '_blank');
+            }
+
+            // Update data
+            englishRevised ++;
+            localStorage.setItem("english", englishRevised);
+        }
+
+        else if (chosenSubject == "Geography") {
+            // Determine paper
+            var paper = Math.floor(Math.random() * 2) + 1;
+
+            if (paper == 1) {
+                // Determine URL
+                var URLNumber = Math.floor(Math.random() *geographyURLs1.length);
+
+                // Open URLs
+                window.open(geographyURLs1[URLNumber], '_blank');
+                window.open(geographyScheme1[URLNumber], '_blank');
+            }
+
+            else if (paper == 2) {
+                // Determine URL
+                var URLNumber = Math.floor(Math.random() *historyURLs1.length);
+
+                // Open URLs
+                window.open(geographyURLs2[URLNumber], '_blank');
+                window.open(geographyScheme1[URLNumber], '_blank');
+            }
+
+            geographyRevised++;
+            localStorage.setItem("geography", geographyRevised);
+        }
+
+        else if (chosenSubject == "History") {
+            // Determine paper
+            var paper = Math.floor(Math.random() * 3) + 1;
+
+            if (paper == 1) {
+                // Determine URL
+                var URLNumber = Math.floor(Math.random() *historyURLs1.length);
+
+                // Open URLs
+                window.open(historyURLs1[URLNumber], '_blank');
+                window.open(historyInsert1[URLNumber], '_blank');
+                window.open(historyScheme1[URLNumber], '_blank');
+            }
+
+            else if (paper == 2) {
+                // Determine URL
+                var URLNumber = Math.floor(Math.random() *historyURLs1.length);
+
+                // Open URLs
+                window.open(historyURLs2[URLNumber], '_blank');
+                window.open(historyInsert2[URLNumber], '_blank');
+                window.open(historyScheme2[URLNumber], '_blank');
+            }
+
+            else if (paper == 3) {
+                // Determine URL
+                var URLNumber = Math.floor(Math.random() *historyURLs1.length);
+
+                // Open URLs
+                window.open(historyURLs3[URLNumber], '_blank');
+                window.open(historyInsert3[URLNumber], '_blank');
+                window.open(historyScheme3[URLNumber], '_blank');
+            }
+
+            // Update data
+            historyRevised++;
+            localStorage.setItem("history", historyRevised);
+        }
+
+        else if (chosenSubject == "Maths") {
+            // Determine paper
+            var paper = Math.floor(Math.random() * 3) + 1;
+
+            if (paper == 1) {
+                // Determine URL
+                var URLNumber = Math.floor(Math.random() *mathsURLs1.length);
+
+                // Open URLs
+                window.open(mathsURLs1[URLNumber], '_blank');
+                window.open(mathsScheme1[URLNumber], '_blank');
+            }
+
+            else if (paper == 2) {
+                // Determine URL
+                var URLNumber = Math.floor(Math.random() *mathsURLs2.length);
+
+                // Open URLs
+                window.open(mathsURLs2[URLNumber], '_blank');
+                window.open(mathsScheme2[URLNumber], '_blank');
+            }
+
+            else if (paper == 3) {
+                // Determine URL
+                var URLNumber = Math.floor(Math.random() *mathsURLs3.length);
+
+                // Open URLs
+                window.open(mathsURLs3[URLNumber], '_blank');
+                window.open(mathsScheme3[URLNumber], '_blank');
+            }
+
+            // Update data
+            mathsRevised ++;
+            localStorage.setItem("maths", mathsRevised);
+        }
+
+        else if (chosenSubject == "Statistics") {
+            // Determine paper
+            var paper = Math.floor(Math.random() * 2) + 1;
+
+            if (paper == 1) {
+                // Determine URL
+                var URLNumber = Math.floor(Math.random() *statisticsURLs1.length);
+
+                // Open URLs
+                window.open(statisticsURLs1[URLNumber], '_blank');
+                window.open(statisticsScheme1[URLNumber], '_blank');
+            }
+
+            else if (paper == 2) {
+                // Determine URL
+                var URLNumber = Math.floor(Math.random() *statisticsURLs1.length);
+
+                // Open URLs
+                window.open(statisticsURLs2[URLNumber], '_blank');
+                window.open(statisticsScheme2[URLNumber], '_blank');
+            }
+
+            // Update data
+            statisticsRevised++;
+            localStorage.setItem("statistics", statisticsRevised);
+        }
+
+        else if (chosenSubject == "Physics") {
+            // Determine paper
+            var paper = Math.floor(Math.random() * 2) + 1;
+
+            if (paper == 1) {
+                // Determine URL
+                var URLNumber = Math.floor(Math.random() *physicsURLs1.length);
+
+                // Open URLs
+                window.open(physicsURLs1[URLNumber], '_blank');
+                window.open(physicsScheme1[URLNumber], '_blank');
+            }
+
+            else if (paper == 2) {
+                // Determine URL
+                var URLNumber = Math.floor(Math.random() *physicsURLs2.length);
+
+                // Open URLs
+                window.open(physicsURLs2[URLNumber], '_blank');
+                window.open(physicsScheme2[URLNumber], '_blank');
+            }
+
+            // Update data
+            physicsRevised++;
+            localStorage.setItem("physics", physicsRevised);
+        }
+    
+        function reset() {
+            localStorage.clear();
+
+            document.getElementById("reset-btn").innerText = "Data deleted"
+        }
+    </script>
+</body>
+</html>
